@@ -96,9 +96,11 @@ router.post('/logout', (req, res, next) => {
   return res.status(200).json({ message: 'Logout successful' })
 })
 
-router.post('/isloggedin', (req, res, next) => {
+router.get('/isloggedin', (req, res, next) => {
   if (req.isAuthenticated()) {
-    return res.status(200).json(req.user)
+    return res
+      .status(200)
+      .json({ firstName: req.user.firstName, lastName: req.user.lastName, email: req.user.email })
   } else {
     res.status(403).json({ message: 'Unauthorized' })
   }
