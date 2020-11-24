@@ -44,6 +44,10 @@ module.exports = (app) => {
               return next(null, false, { message: 'Incorrect password' })
             }
 
+            if (!user.isActive){
+              return next(null, false, {message: 'Account not validated. Check your email for a validation code.'})
+            }
+
             return next(null, user)
           })
           .catch((err) => next(err))
