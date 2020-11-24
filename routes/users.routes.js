@@ -106,4 +106,26 @@ router.get('/isloggedin', (req, res, next) => {
   }
 })
 
+router.post('/validation/:email/:validationCode/', (req, res, next) => {
+  User.findOne({ where: { email: req.params.email, confirmationCode: req.params.validationCode } })
+    .then((user) => user.update({ isActive: true }))
+    .then((user) => {
+      req.login(user, (err) => {
+        if (err) {
+          return res.status(500).json({ message: 'Session save went bad.' })
+        }
+        return res.status(200).json({
+          firstName: user.firstName,
+          lastName: user.lastName,
+          email: user.email,
+          isActive: user.isActive,
+        })
+      })
+    })
+    .catch((err) => {
+      console.log(err)
+      res.status(500).json({ message: 'Something went wrong while updating the user.' })
+    })
+})
+
 module.exports = router
