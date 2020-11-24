@@ -6,7 +6,7 @@ const crypto = require('crypto')
 const flash = require('connect-flash')
 const LocalStrategy = require('passport-local').Strategy
 
-const { User } = require('../database/models')
+const User = require('../database/models').User
 
 module.exports = (app) => {
   app.use(
@@ -27,28 +27,30 @@ module.exports = (app) => {
   app.use(flash())
 
   passport.use(
-    new LocalStrategy({ passReqToCallback: true }, (req, email, password, next) => {
-      User.findOne({ where: { email: email } })
-        .then((user) => {
-          if (!user) {
-            return next(null, false, { message: 'Email incorrecto' })
-          }
+    new LocalStrategy(
+      { passReqToCallback: true, usernameField: 'email', passwordField: 'password' },
+      (req, email, password, next) => {
+        User.findOne({ where: { email: email } })
+          .then((user) => {
+            if (!user) {
+              return next(null, false, { message: 'Email incorrecto' })
+            }
 
-          const cipheredPassword = crypto.createHmac('sha512', process.env.CRYPTOKEY_1)
-          cipheredPassword.update(password)
-          const digestedPassword = cipheredPassword.digest('base64')
+            const cipheredPassword = crypto.createHmac('sha512', process.env.CRYPTOKEY_1)
+            cipheredPassword.update(password)
+            const digestedPassword = cipheredPassword.digest('base64')
 
-          if (digestedPassword != user.password) {
-            return next(null, false, { message: 'Contraseña incorrecta' })
-          }
+            if (digestedPassword != user.password) {
+              return next(null, false, { message: 'Contraseña incorrecta' })
+            }
 
-          return next(null, user)
-        })
-        .catch((err) => next(err))
-    })
+            return next(null, user)
+          })
+          .catch((err) => next(err))
+      }
+    )
   )
 
   app.use(passport.initialize())
   app.use(passport.session())
-  
 }
