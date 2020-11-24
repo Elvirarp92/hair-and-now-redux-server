@@ -33,7 +33,7 @@ module.exports = (app) => {
         User.findOne({ where: { email: email } })
           .then((user) => {
             if (!user) {
-              return next(null, false, { message: 'Email incorrecto' })
+              return next(null, false, { message: 'Incorrect email' })
             }
 
             const cipheredPassword = crypto.createHmac('sha512', process.env.CRYPTOKEY_1)
@@ -41,7 +41,7 @@ module.exports = (app) => {
             const digestedPassword = cipheredPassword.digest('base64')
 
             if (digestedPassword != user.password) {
-              return next(null, false, { message: 'Contraseña incorrecta' })
+              return next(null, false, { message: 'Incorrect password' })
             }
 
             return next(null, user)
