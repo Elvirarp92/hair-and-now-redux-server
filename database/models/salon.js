@@ -28,9 +28,6 @@ module.exports = (sequelize, DataTypes) => {
       phoneNumber: {
         type: DataTypes.STRING,
         allowNull: false,
-        validate: {
-          is: /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im, //RegEx checks whether it's a valid phone number
-        },
       },
     },
     {
