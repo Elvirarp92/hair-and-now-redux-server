@@ -11,7 +11,7 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       User.belongsToMany(models.Salon, {
         through: 'UsersSalons',
-        as: 'user',
+        as: { singular: 'salon', plural: 'salons' },
         foreignKey: 'userId',
         otherKey: 'salonId',
       })
