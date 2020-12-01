@@ -12,6 +12,12 @@ router.get('/', (req, res, next) => {
     .catch((err) => next(new Error(err)))
 })
 
+router.get('/:id', (req, res, next) => {
+  Salon.findOne({ where: { id: req.params.id } })
+    .then((salon) => res.status(200).json(salon))
+    .catch((err) => next(new Error(err)))
+})
+
 router.put('/', checkLoggedIn, (req, res, next) => {
   Salon.create({
     name: req.body.name,
