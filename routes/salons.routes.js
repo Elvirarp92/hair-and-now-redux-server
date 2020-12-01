@@ -37,4 +37,17 @@ router.put('/', checkLoggedIn, (req, res, next) => {
     .catch((err) => next(new Error(err)))
 })
 
+router.patch('/:id', checkLoggedIn, (req, res, next) => {
+  Salon.findOne({ where: { id: req.params.id } })
+    .then((salon) => {
+      if (salon.hasUser(req.user[0].id)) {
+        salon.update(req.body)
+        return res.status(200).json(salon)
+      } else {
+        return res.status(403).json({ message: 'You do not have permission to edit this resource' })
+      }
+    })
+    .catch((err) => next(new Error(err)))
+})
+
 module.exports = router
